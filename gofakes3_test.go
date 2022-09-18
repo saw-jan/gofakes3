@@ -18,10 +18,10 @@ import (
 
 	xml "github.com/minio/xxml"
 
+	"github.com/Mikubill/gofakes3"
+	"github.com/Mikubill/gofakes3/s3mem"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/johannesboyne/gofakes3"
-	"github.com/johannesboyne/gofakes3/backend/s3mem"
 )
 
 func TestCreateBucket(t *testing.T) {
