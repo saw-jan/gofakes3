@@ -3,7 +3,6 @@ package gofakes3_test
 import (
 	"bufio"
 	"bytes"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -16,6 +15,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	xml "github.com/minio/xxml"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"

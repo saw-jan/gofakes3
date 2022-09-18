@@ -1,17 +1,17 @@
 package gofakes3
 
 import (
-	"encoding/xml"
 	"fmt"
 	"net/http"
 	"time"
+
+	xml "github.com/minio/xxml"
 )
 
 // Error codes are documented here:
 // https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
 //
 // If you add a code to this list, please also add it to ErrorCode.Status().
-//
 const (
 	ErrNone ErrorCode = ""
 
@@ -150,13 +150,12 @@ type Error interface {
 // Code and Message:
 //
 //	func NotQuiteRight(at time.Time, max time.Duration) error {
-// 	    code := ErrNotQuiteRight
-// 	    return &notQuiteRightResponse{
-// 	        ErrorResponse{Code: code, Message: code.Message()},
-// 	        123456789,
-// 	    }
-// 	}
-//
+//	    code := ErrNotQuiteRight
+//	    return &notQuiteRightResponse{
+//	        ErrorResponse{Code: code, Message: code.Message()},
+//	        123456789,
+//	    }
+//	}
 type ErrorResponse struct {
 	XMLName xml.Name `xml:"Error"`
 
@@ -291,7 +290,6 @@ func (e ErrorCode) Status() int {
 //	}
 //
 // If err is nil and code is ErrNone, HasErrorCode returns true.
-//
 func HasErrorCode(err error, code ErrorCode) bool {
 	if err == nil && code == "" {
 		return true

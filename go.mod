@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/aws/aws-sdk-go v1.17.4
+	github.com/minio/xxml v0.0.3 // indirect
 	github.com/ryszard/goskiplist v0.0.0-20150312221310-2dfbae5fcf46
 	github.com/shabbyrobe/gocovmerge v0.0.0-20180507124511-f6ea450bfb63
 	github.com/spf13/afero v1.2.1

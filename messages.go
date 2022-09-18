@@ -1,11 +1,12 @@
 package gofakes3
 
 import (
-	"encoding/xml"
 	"fmt"
 	"sort"
 	"strings"
 	"time"
+
+	xml "github.com/minio/xxml"
 )
 
 type Storage struct {
