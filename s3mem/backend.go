@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"io"
 	"sync"
+	"time"
 
 	"github.com/Mikubill/gofakes3"
 	"github.com/Mikubill/gofakes3/internal/goskipiter"
@@ -257,6 +258,32 @@ func (db *Backend) PutObject(bucketName, objectName string, meta map[string]stri
 	}
 
 	return result, nil
+}
+
+func (db *Backend) CopyObject(srcBucket, srcKey, dstBucket, dstKey string, meta map[string]string) (result gofakes3.CopyObjectResult, err error) {
+	db.lock.Lock()
+	defer db.lock.Unlock()
+
+	c, err := db.GetObject(srcBucket, srcKey, nil)
+	if err != nil {
+		return
+	}
+
+	for k, v := range c.Metadata {
+		if _, found := meta[k]; !found && k != "X-Amz-Acl" {
+			meta[k] = v
+		}
+	}
+
+	_, err = db.PutObject(dstBucket, dstKey, meta, c.Contents, c.Size)
+	if err != nil {
+		return
+	}
+
+	return gofakes3.CopyObjectResult{
+		ETag:         `"` + hex.EncodeToString(c.Hash) + `"`,
+		LastModified: gofakes3.NewContentTime(time.Now()),
+	}, nil
 }
 
 func (db *Backend) DeleteObject(bucketName, objectName string) (result gofakes3.ObjectDeleteResult, rerr error) {

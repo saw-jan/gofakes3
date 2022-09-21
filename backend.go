@@ -130,7 +130,6 @@ type PutObjectResult struct {
 //
 // The Backend API is not yet stable; if you create your own Backend, breakage
 // is likely until this notice is removed.
-//
 type Backend interface {
 	// ListBuckets returns a list of all buckets owned by the authenticated
 	// sender of the request.
@@ -231,6 +230,8 @@ type Backend interface {
 	PutObject(bucketName, key string, meta map[string]string, input io.Reader, size int64) (PutObjectResult, error)
 
 	DeleteMulti(bucketName string, objects ...string) (MultiDeleteResult, error)
+
+	CopyObject(srcBucket, srcKey, dstBucket, dstKey string, meta map[string]string) (CopyObjectResult, error)
 }
 
 // VersionedBackend may be optionally implemented by a Backend in order to support
@@ -239,7 +240,6 @@ type Backend interface {
 // If you don't implement VersionedBackend, requests to GoFakeS3 that attempt to
 // make use of versions will return ErrNotImplemented if GoFakesS3 is unable to
 // find another way to satisfy the request.
-//
 type VersionedBackend interface {
 	// VersioningConfiguration must return a gofakes3.ErrNoSuchBucket error if the bucket
 	// does not exist. See gofakes3.BucketNotFound() for a convenient way to create one.

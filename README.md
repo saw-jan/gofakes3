@@ -5,5 +5,6 @@ This is a fork of [johannesboyne/gofakes3](https://github.com/johannesboyne/gofa
 
 Notable differences:
 
-* use [minio/xxml](github.com/minio/xxml) as xml parser 
-* `getVersioningConfiguration` will return empty when unversioned
+* Use [minio/xxml](github.com/minio/xxml) as xml parser 
+* Func `getVersioningConfiguration` will return empty when unversioned
+* New func in `backend` interface: `CopyObjcet`
