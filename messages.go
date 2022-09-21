@@ -495,12 +495,12 @@ type VersionID string
 type VersioningConfiguration struct {
 	XMLName xml.Name `xml:"VersioningConfiguration"`
 
-	Status VersioningStatus `xml:"Status"`
+	Status VersioningStatus `xml:"Status,omitempty"`
 
 	// When enabled, the bucket owner must include the x-amz-mfa request header
 	// in requests to change the versioning state of a bucket and to
 	// permanently delete a versioned object.
-	MFADelete MFADeleteStatus `xml:"MfaDelete"`
+	MFADelete MFADeleteStatus `xml:"MfaDelete,omitempty"`
 }
 
 func (v *VersioningConfiguration) Enabled() bool {
