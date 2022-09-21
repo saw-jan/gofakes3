@@ -825,7 +825,7 @@ func (g *GoFakeS3) putMultipartUploadPart(bucket, object string, uploadID Upload
 	}
 
 	size, err := strconv.ParseInt(r.Header.Get("Content-Length"), 10, 64)
-	if err != nil || size <= 0 {
+	if err != nil {
 		return ErrMissingContentLength
 	}
 

@@ -261,13 +261,12 @@ func (db *Backend) PutObject(bucketName, objectName string, meta map[string]stri
 }
 
 func (db *Backend) CopyObject(srcBucket, srcKey, dstBucket, dstKey string, meta map[string]string) (result gofakes3.CopyObjectResult, err error) {
-	db.lock.Lock()
-	defer db.lock.Unlock()
 
 	c, err := db.GetObject(srcBucket, srcKey, nil)
 	if err != nil {
 		return
 	}
+	defer c.Contents.Close()
 
 	for k, v := range c.Metadata {
 		if _, found := meta[k]; !found && k != "X-Amz-Acl" {
