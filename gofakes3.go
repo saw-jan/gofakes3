@@ -1069,7 +1069,7 @@ func metadataSize(meta map[string]string) int {
 func metadataHeaders(headers map[string][]string, at time.Time, sizeLimit int) (map[string]string, error) {
 	meta := make(map[string]string)
 	for hk, hv := range headers {
-		if strings.HasPrefix(hk, "X-Amz-") || hk == "Content-Type" || hk == "Content-Disposition" {
+		if strings.HasPrefix(hk, "X-Amz-") || strings.HasPrefix(hk, "Content-") || hk == "Cache-Control" {
 			meta[hk] = hv[0]
 		}
 	}
