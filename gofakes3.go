@@ -15,7 +15,7 @@ import (
 	"strings"
 	"sync/atomic"
 	"time"
-	
+
 	xml "github.com/Mikubill/gofakes3/xml"
 )
 

@@ -145,7 +145,7 @@ func (d *Decoder) Decode(v interface{}) error {
 // but also wants to defer to Unmarshal for some elements.
 func (d *Decoder) DecodeElement(v interface{}, start *StartElement) error {
 	val := reflect.ValueOf(v)
-	if val.Kind() != reflect.Pointer {
+	if val.Kind() != reflect.Ptr {
 		return errors.New("non-pointer passed to Unmarshal")
 	}
 

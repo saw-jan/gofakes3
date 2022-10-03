@@ -1169,11 +1169,11 @@ func (d *Decoder) nsname() (name Name, ok bool) {
 	}
 	if strings.Count(s, ":") > 1 {
 		name.Local = s
-	} else if space, local, ok := strings.Cut(s, ":"); !ok || space == "" || local == "" {
+	} else if i := strings.Index(s, ":"); i < 1 || i > len(s)-2 {
 		name.Local = s
 	} else {
-		name.Space = space
-		name.Local = local
+		name.Space = s[0:i]
+		name.Local = s[i+1:]
 	}
 	return name, true
 }
@@ -1910,7 +1910,7 @@ var (
 		'\x05': []byte("&#x5;"),
 		'\x06': []byte("&#x6;"),
 		'\x07': []byte("&#x7;"),
-	}	
+	}
 )
 
 // EscapeText writes to w the properly escaped XML equivalent
@@ -2036,26 +2036,25 @@ func emitCDATA(w io.Writer, s []byte) error {
 	if _, err := w.Write(cdataStart); err != nil {
 		return err
 	}
-
 	for {
-		before, after, ok := bytes.Cut(s, cdataEnd)
-		if !ok {
+		i := bytes.Index(s, cdataEnd)
+		if i >= 0 && i+len(cdataEnd) <= len(s) {
+			// Found a nested CDATA directive end.
+			if _, err := w.Write(s[:i]); err != nil {
+				return err
+			}
+			if _, err := w.Write(cdataEscape); err != nil {
+				return err
+			}
+			i += len(cdataEnd)
+		} else {
+			if _, err := w.Write(s); err != nil {
+				return err
+			}
 			break
 		}
-		// Found a nested CDATA directive end.
-		if _, err := w.Write(before); err != nil {
-			return err
-		}
-		if _, err := w.Write(cdataEscape); err != nil {
-			return err
-		}
-		s = after
+		s = s[i:]
 	}
-
-	if _, err := w.Write(s); err != nil {
-		return err
-	}
-
 	_, err := w.Write(cdataEnd)
 	return err
 }
@@ -2066,16 +2065,20 @@ func procInst(param, s string) string {
 	// TODO: this parsing is somewhat lame and not exact.
 	// It works for all actual cases, though.
 	param = param + "="
-	_, v, _ := strings.Cut(s, param)
+	idx := strings.Index(s, param)
+	if idx == -1 {
+		return ""
+	}
+	v := s[idx+len(param):]
 	if v == "" {
 		return ""
 	}
 	if v[0] != '\'' && v[0] != '"' {
 		return ""
 	}
-	unquote, _, ok := strings.Cut(v[1:], v[:1])
-	if !ok {
+	idx = strings.IndexRune(v[1:], rune(v[0]))
+	if idx == -1 {
 		return ""
 	}
-	return unquote
+	return v[1 : idx+1]
 }

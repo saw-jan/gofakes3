@@ -115,8 +115,8 @@ func structFieldInfo(typ reflect.Type, f *reflect.StructField) (*fieldInfo, erro
 
 	// Split the tag from the xml namespace if necessary.
 	tag := f.Tag.Get("xml")
-	if ns, t, ok := strings.Cut(tag, " "); ok {
-		finfo.xmlns, tag = ns, t
+	if i := strings.Index(tag, " "); i >= 0 {
+		finfo.xmlns, tag = tag[:i], tag[i+1:]
 	}
 
 	// Parse flags.
@@ -229,7 +229,7 @@ func structFieldInfo(typ reflect.Type, f *reflect.StructField) (*fieldInfo, erro
 // in case it exists and has a valid xml field tag, otherwise
 // it returns nil.
 func lookupXMLName(typ reflect.Type) (xmlname *fieldInfo) {
-	for typ.Kind() == reflect.Pointer {
+	for typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
 	}
 	if typ.Kind() != reflect.Struct {
