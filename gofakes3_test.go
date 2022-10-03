@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	xml "github.com/minio/xxml"
+	xml "github.com/Mikubill/gofakes3/xml"
 
 	"github.com/Mikubill/gofakes3"
 	"github.com/Mikubill/gofakes3/s3mem"

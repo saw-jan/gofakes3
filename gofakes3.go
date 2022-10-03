@@ -15,8 +15,8 @@ import (
 	"strings"
 	"sync/atomic"
 	"time"
-
-	xml "github.com/minio/xxml"
+	
+	xml "github.com/Mikubill/gofakes3/xml"
 )
 
 // GoFakeS3 implements HTTP handlers for processing S3 requests and returning
