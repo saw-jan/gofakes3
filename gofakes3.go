@@ -16,6 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/Mikubill/gofakes3/signature"
 	xml "github.com/Mikubill/gofakes3/xml"
 )
 
@@ -38,6 +39,9 @@ type GoFakeS3 struct {
 	autoBucket              bool
 	uploader                *uploader
 	log                     Logger
+
+	// simple v4 signature
+	v4AuthPair map[string]string
 }
 
 // New creates a new GoFakeS3 using the supplied Backend. Backends are pluggable.
@@ -85,6 +89,11 @@ func (g *GoFakeS3) Server() http.Handler {
 		handler = g.hostBucketMiddleware(handler)
 	}
 
+	if len(g.v4AuthPair) > 0 {
+		signature.LoadKeys(g.v4AuthPair)
+		handler = g.hostBucketMiddleware(handler)
+	}
+
 	return handler
 }
 
@@ -101,6 +110,22 @@ func (g *GoFakeS3) timeSkewMiddleware(handler http.Handler) http.Handler {
 				g.httpError(w, rq, requestTimeTooSkewed(at, g.timeSkew))
 				return
 			}
+		}
+
+		handler.ServeHTTP(w, rq)
+	})
+}
+
+func (g *GoFakeS3) v4AuthMiddleware(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, rq *http.Request) {
+		if result := signature.Verify(rq); result != signature.ErrNone {
+			g.log.Print(LogWarn, "Access Denied:", rq.RemoteAddr, "=>", rq.URL)
+
+			resp := signature.GetAPIError(result)
+			w.WriteHeader(resp.HTTPStatusCode)
+			w.Header().Add("content-type", "application/xml")
+			_, _ = w.Write(signature.EncodeAPIErrorToResponse(resp))
+			return
 		}
 
 		handler.ServeHTTP(w, rq)

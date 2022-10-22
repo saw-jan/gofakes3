@@ -1901,17 +1901,33 @@ var (
 	escCR   = []byte("&#xD;")
 	escFFFD = []byte("\uFFFD") // Unicode replacement character
 
-	controlChars = map[rune][]byte{
-		'\x00': []byte("&#x0;"),
-		'\x01': []byte("&#x1;"),
-		'\x02': []byte("&#x2;"),
-		'\x03': []byte("&#x3;"),
-		'\x04': []byte("&#x4;"),
-		'\x05': []byte("&#x5;"),
-		'\x06': []byte("&#x6;"),
-		'\x07': []byte("&#x7;"),
-	}
+	// controlChars = map[rune][]byte{
+	// 	'\x00': []byte("&#x0;"),
+	// 	'\x01': []byte("&#x1;"),
+	// 	'\x02': []byte("&#x2;"),
+	// 	'\x03': []byte("&#x3;"),
+	// 	'\x04': []byte("&#x4;"),
+	// 	'\x05': []byte("&#x5;"),
+	// 	'\x06': []byte("&#x6;"),
+	// 	'\x07': []byte("&#x7;"),
+
+	// 	// 0x7F
+	// 	'\x7f': []byte("&#x7f;"),
+	// }
+	symbolOffset = '␀'
 )
+
+func escapeCtlChars(r rune) ([]byte, bool) {
+	if r >= 1 && r <= 0x1F {
+		return []byte(fmt.Sprintf("&#%x", r)), true
+	} else if r > symbolOffset && r <= symbolOffset+0x1F {
+		return []byte(fmt.Sprintf("&#%x", r)), true
+	} else if r == '\x7f' {
+		// DEL
+		return []byte("&#x7f;"), true
+	}
+	return nil, false
+}
 
 // EscapeText writes to w the properly escaped XML equivalent
 // of the plain text data s.
@@ -1949,7 +1965,7 @@ func escapeText(w io.Writer, s []byte, escapeNewline bool) error {
 		case '\r':
 			esc = escCR
 		default:
-			if v, ok := controlChars[r]; ok {
+			if v, ok := escapeCtlChars(r); ok {
 				esc = v
 				break
 			}
@@ -1997,7 +2013,7 @@ func (p *printer) EscapeString(s string) {
 		case '\r':
 			esc = escCR
 		default:
-			if v, ok := controlChars[r]; ok {
+			if v, ok := escapeCtlChars(r); ok {
 				esc = v
 				break
 			}
