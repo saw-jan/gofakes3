@@ -27,16 +27,24 @@ func checkKeyValid(r *http.Request, accessKey string) (Credentials, bool, ErrorC
 	return u.(Credentials), true, ErrNone
 }
 
-// LoadKeys parse and load accessKey-secretKey pair from user input
-//
-// example: abc123abc123-ac8bef6aaccd
-func LoadKeys(pairs map[string]string) {
+// LoadKeys parse and store accessKey-secretKey pair
+func StoreKeys(pairs map[string]string) {
 	for accessKey, secretKey := range pairs {
 		credStore.Store(accessKey, Credentials{
 			AccessKey: accessKey,
 			SecretKey: secretKey,
 		})
 	}
+}
+
+func ReloadKeys(pairs map[string]string) {
+	credStore.Range(func(key, value interface{}) bool {
+		if _, ok := pairs[key.(string)]; !ok {
+			credStore.Delete(key)
+		}
+		return true
+	})
+	StoreKeys(pairs)
 }
 
 func sumHMAC(key []byte, data []byte) []byte {

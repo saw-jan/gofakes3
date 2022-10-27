@@ -126,11 +126,11 @@ func getSigningKey(secretKey string, t time.Time, region string) []byte {
 	return signingKey
 }
 
-// Verify - Verify authorization header with calculated header in accordance with
+// V4SignVerify - Verify authorization header with calculated header in accordance with
 //   - http://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html
 //
 // returns nil if signature matches.
-func Verify(r *http.Request) ErrorCode {
+func V4SignVerify(r *http.Request) ErrorCode {
 	// Copy request.
 	req := *r
 	hashedPayload := getContentSha256Cksum(r)

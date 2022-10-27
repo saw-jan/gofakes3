@@ -45,7 +45,7 @@ func TestSignatureMatch(t *testing.T) {
 	region := RandString(16)
 
 	credentials := credentials.NewStaticCredentials(ak, sk, "")
-	signature.LoadKeys(map[string]string{ak: sk})
+	signature.ReloadKeys(map[string]string{ak: sk})
 	signer := v4.NewSigner(credentials)
 
 	req, err := http.NewRequest(http.MethodPost, "https://s3-endpoint.exmaple.com/", Body)
@@ -58,7 +58,7 @@ func TestSignatureMatch(t *testing.T) {
 		t.Error(err)
 	}
 
-	if result := signature.Verify(req); result != signature.ErrNone {
+	if result := signature.V4SignVerify(req); result != signature.ErrNone {
 		t.Error(fmt.Errorf("invalid result: expect none but got %+v", signature.GetAPIError(result)))
 	}
 }

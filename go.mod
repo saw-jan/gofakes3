@@ -3,7 +3,7 @@ module github.com/Mikubill/gofakes3
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.44.121
+	github.com/aws/aws-sdk-go v1.44.124
 	github.com/ryszard/goskiplist v0.0.0-20150312221310-2dfbae5fcf46
 	github.com/shabbyrobe/gocovmerge v0.0.0-20190829150210-3e036491d500
 	github.com/stretchr/testify v1.8.0
