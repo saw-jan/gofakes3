@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
-	"github.com/Mikubill/gofakes3/signature"
 )
 
 // routeBase is a http.HandlerFunc that dispatches top level routes for
@@ -36,18 +34,6 @@ func (g *GoFakeS3) routeBase(w http.ResponseWriter, r *http.Request) {
 	hdr.Set("x-amz-id-2", base64.StdEncoding.EncodeToString([]byte(id+id+id+id))) // x-amz-id-2 is 48 bytes of random stuff
 	hdr.Set("x-amz-request-id", id)
 	hdr.Set("Server", "AmazonS3")
-
-	if len(g.v4AuthPair) > 0 {
-		if result := signature.V4SignVerify(r); result != signature.ErrNone {
-			g.log.Print(LogWarn, "Access Denied:", r.RemoteAddr, "=>", r.URL)
-
-			resp := signature.GetAPIError(result)
-			w.WriteHeader(resp.HTTPStatusCode)
-			w.Header().Add("content-type", "application/xml")
-			_, _ = w.Write(signature.EncodeAPIErrorToResponse(resp))
-			return
-		}
-	}
 
 	if len(parts) == 2 {
 		object = parts[1]

@@ -95,7 +95,7 @@ func (g *GoFakeS3) Server() http.Handler {
 		handler = g.hostBucketMiddleware(handler)
 	}
 
-	return handler
+	return g.authMiddleware(handler)
 }
 
 func (g *GoFakeS3) AddAuthKeys(p map[string]string) {
@@ -110,6 +110,24 @@ func (g *GoFakeS3) DelAuthKeys(p []string) {
 		delete(g.v4AuthPair, v)
 	}
 	signature.ReloadKeys(g.v4AuthPair)
+}
+
+func (g *GoFakeS3) authMiddleware(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, rq *http.Request) {
+		if len(g.v4AuthPair) > 0 {
+			if result := signature.V4SignVerify(rq); result != signature.ErrNone {
+				g.log.Print(LogWarn, "Access Denied:", rq.RemoteAddr, "=>", rq.URL)
+
+				resp := signature.GetAPIError(result)
+				w.WriteHeader(resp.HTTPStatusCode)
+				w.Header().Add("content-type", "application/xml")
+				_, _ = w.Write(signature.EncodeAPIErrorToResponse(resp))
+				return
+			}
+		}
+
+		handler.ServeHTTP(w, rq)
+	})
 }
 
 func (g *GoFakeS3) timeSkewMiddleware(handler http.Handler) http.Handler {
