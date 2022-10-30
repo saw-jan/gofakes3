@@ -170,7 +170,7 @@ func V4SignVerify(r *http.Request) ErrorCode {
 	}
 
 	// Query string.
-	queryStr := req.Form.Encode()
+	queryStr := req.URL.RawQuery
 
 	// Get canonical request.
 	canonicalRequest := getCanonicalRequest(extractedSignedHeaders, hashedPayload, queryStr, req.URL.Path, req.Method)

@@ -48,7 +48,7 @@ func TestSignatureMatch(t *testing.T) {
 	signature.ReloadKeys(map[string]string{ak: sk})
 	signer := v4.NewSigner(credentials)
 
-	req, err := http.NewRequest(http.MethodPost, "https://s3-endpoint.exmaple.com/", Body)
+	req, err := http.NewRequest(http.MethodPost, "https://s3-endpoint.exmaple.com/bin", Body)
 	if err != nil {
 		t.Error(err)
 	}
