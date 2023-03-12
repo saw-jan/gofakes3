@@ -23,23 +23,16 @@ func newChunkedReader(inner io.Reader) *chunkedReader {
 func (r *chunkedReader) Read(p []byte) (n int, err error) {
 	sizeToRead := len(p)
 	for sizeToRead > 0 {
-		if r.chunkRemain > sizeToRead {
-			r.chunkRemain -= sizeToRead
-			// read sizeToRead bytes from inner reader
-			// to p, start from n.
-			// n is bytes already read.
-			innerN, err := r.inner.Read(p[n : n+sizeToRead])
-			sizeToRead -= innerN
-			n += innerN
-			if err != nil {
-				return n, err
+		if r.chunkRemain > 0 {
+			// read until this chunk or sizeToRead ends
+			bytesToRead := sizeToRead
+			if sizeToRead > r.chunkRemain {
+				bytesToRead = r.chunkRemain
 			}
-		} else if r.chunkRemain > 0 {
-			// read until this chunk ends
-			innerN, err := r.inner.Read(p[n : n+r.chunkRemain])
+			innerN, err := r.inner.Read(p[n : n+bytesToRead])
 			r.chunkRemain -= innerN
-			n += innerN
 			sizeToRead -= innerN
+			n += innerN
 			if err != nil {
 				return n, err
 			}
