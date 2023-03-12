@@ -881,7 +881,23 @@ func (g *GoFakeS3) putMultipartUploadPart(bucket, object string, uploadID Upload
 	}
 
 	defer r.Body.Close()
-	var rdr io.Reader = r.Body
+
+	meta, err := metadataHeaders(r.Header, g.timeSource.Now(), g.metadataSizeLimit)
+	if err != nil {
+		return err
+	}
+
+	var rdr io.Reader
+	if sha, ok := meta["X-Amz-Content-Sha256"]; ok && sha == "STREAMING-AWS4-HMAC-SHA256-PAYLOAD" {
+		rdr = newChunkedReader(r.Body)
+		size, err = strconv.ParseInt(meta["X-Amz-Decoded-Content-Length"], 10, 64)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest) // XXX: no code for this, according to s3tests
+			return nil
+		}
+	} else {
+		rdr = r.Body
+	}
 
 	if g.integrityCheck {
 		md5Base64 := r.Header.Get("Content-MD5")
@@ -903,7 +919,7 @@ func (g *GoFakeS3) putMultipartUploadPart(bucket, object string, uploadID Upload
 		return err
 	}
 
-	if int64(len(body)) != r.ContentLength {
+	if int64(len(body)) != size {
 		return ErrIncompleteBody
 	}
 
