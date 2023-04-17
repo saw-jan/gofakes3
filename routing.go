@@ -27,7 +27,7 @@ func (g *GoFakeS3) routeBase(w http.ResponseWriter, r *http.Request) {
 		object = ""
 		err    error
 	)
-
+	g.request = r
 	hdr := w.Header()
 
 	id := fmt.Sprintf("%016X", g.nextRequestID())

@@ -86,6 +86,14 @@ func extractFields(signElement, fieldName string) (string, ErrorCode) {
 	return signFields[1], ErrNone
 }
 
+func GetAccessKey(v4Auth string) (accessKey string, err ErrorCode) {
+	r, err := parseSignV4(v4Auth)
+	if err != ErrNone {
+		return "", err
+	}
+	return r.Credential.accessKey, ErrNone
+}
+
 // Parses signature version '4' header of the following form.
 //
 //	Authorization: algorithm Credential=accessKeyID/credScope,  SignedHeaders=signedHeaders, Signature=signature

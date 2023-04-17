@@ -42,6 +42,8 @@ type GoFakeS3 struct {
 
 	// simple v4 signature
 	v4AuthPair map[string]string
+
+	request *http.Request
 }
 
 // New creates a new GoFakeS3 using the supplied Backend. Backends are pluggable.
@@ -77,6 +79,18 @@ func New(backend Backend, options ...Option) *GoFakeS3 {
 	}
 
 	return s3
+}
+
+func (g *GoFakeS3) GetAccessKey() (accessKey string, error signature.ErrorCode) {
+	// Save authorization header.
+	v4Auth := g.request.Header.Get("Authorization")
+
+	// Parse signature version '4' header.
+	result, err := signature.GetAccessKey(v4Auth)
+	if err != signature.ErrNone {
+		return "", err
+	}
+	return result, signature.ErrNone
 }
 
 func (g *GoFakeS3) nextRequestID() uint64 {
