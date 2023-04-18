@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	xml "github.com/Mikubill/gofakes3/xml"
+	xml "github.com/JankariTech/gofakes3/xml"
 )
 
 func TestErrorCustomResponseMarshalsAsExpected(t *testing.T) {
