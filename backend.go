@@ -2,6 +2,7 @@ package gofakes3
 
 import (
 	"io"
+	"net/http"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 )
@@ -134,7 +135,7 @@ type Backend interface {
 	// ListBuckets returns a list of all buckets owned by the authenticated
 	// sender of the request.
 	// https://docs.aws.amazon.com/AmazonS3/latest/API/RESTServiceGET.html
-	ListBuckets() ([]BucketInfo, error)
+	ListBuckets(r *http.Request) ([]BucketInfo, error)
 
 	// ListBucket returns the contents of a bucket. Backends should use the
 	// supplied prefix to limit the contents of the bucket and to sort the

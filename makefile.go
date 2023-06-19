@@ -66,7 +66,7 @@ func runBuildDocker() error {
 		return err
 	}
 
-	cmd = command("docker", "build", "-t", "JankariTech/gofakes3", ".")
+	cmd = command("docker", "build", "-t", "saw-jan/gofakes3", ".")
 	if err := cmd.Run(); err != nil {
 		return err
 	}

@@ -16,8 +16,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/JankariTech/gofakes3/signature"
-	xml "github.com/JankariTech/gofakes3/xml"
+	"github.com/saw-jan/gofakes3/signature"
+	xml "github.com/saw-jan/gofakes3/xml"
 )
 
 // GoFakeS3 implements HTTP handlers for processing S3 requests and returning
@@ -81,16 +81,16 @@ func New(backend Backend, options ...Option) *GoFakeS3 {
 	return s3
 }
 
-func (g *GoFakeS3) GetAccessKey() (accessKey string, error signature.ErrorCode) {
+func (g *GoFakeS3) GetAccessKey() (request *http.Request, accessKey string, error signature.ErrorCode) {
 	// Save authorization header.
 	v4Auth := g.request.Header.Get("Authorization")
 
 	// Parse signature version '4' header.
 	result, err := signature.GetAccessKey(v4Auth)
 	if err != signature.ErrNone {
-		return "", err
+		return nil, "", err
 	}
-	return result, signature.ErrNone
+	return g.request, result, signature.ErrNone
 }
 
 func (g *GoFakeS3) nextRequestID() uint64 {
@@ -198,7 +198,7 @@ func (g *GoFakeS3) httpError(w http.ResponseWriter, r *http.Request, err error) 
 }
 
 func (g *GoFakeS3) listBuckets(w http.ResponseWriter, r *http.Request) error {
-	buckets, err := g.storage.ListBuckets()
+	buckets, err := g.storage.ListBuckets(r)
 	if err != nil {
 		return err
 	}

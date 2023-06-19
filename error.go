@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	xml "github.com/JankariTech/gofakes3/xml"
+	xml "github.com/saw-jan/gofakes3/xml"
 )
 
 // Error codes are documented here:

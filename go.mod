@@ -1,4 +1,4 @@
-module github.com/JankariTech/gofakes3
+module github.com/saw-jan/gofakes3
 
 go 1.17
 

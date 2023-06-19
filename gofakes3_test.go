@@ -16,12 +16,12 @@ import (
 	"testing"
 	"time"
 
-	xml "github.com/JankariTech/gofakes3/xml"
+	xml "github.com/saw-jan/gofakes3/xml"
 
-	"github.com/JankariTech/gofakes3"
-	"github.com/JankariTech/gofakes3/s3mem"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/saw-jan/gofakes3"
+	"github.com/saw-jan/gofakes3/s3mem"
 )
 
 func TestCreateBucket(t *testing.T) {

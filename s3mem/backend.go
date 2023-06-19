@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/JankariTech/gofakes3"
-	"github.com/JankariTech/gofakes3/internal/goskipiter"
+	"github.com/saw-jan/gofakes3"
+	"github.com/saw-jan/gofakes3/internal/goskipiter"
 )
 
 var (

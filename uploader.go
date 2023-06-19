@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/JankariTech/gofakes3/internal/goskipiter"
 	"github.com/ryszard/goskiplist/skiplist"
+	"github.com/saw-jan/gofakes3/internal/goskipiter"
 )
 
 var add1 = new(big.Int).SetInt64(1)

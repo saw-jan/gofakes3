@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	xml "github.com/JankariTech/gofakes3/xml"
+	xml "github.com/saw-jan/gofakes3/xml"
 )
 
 func TestHttpError(t *testing.T) {
